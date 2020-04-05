@@ -11,18 +11,60 @@
   \usepackage{lmodern}
 \fi
 
-\usepackage{hyperref}
-\usepackage[parfill]{parskip}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{mathtools}
 \usepackage{physics}
+
 \usepackage{enumitem}
 \usepackage{multicol}
 \usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[parfill]{parskip}
 \usepackage{lipsum}
 \usepackage[export]{adjustbox}
+
+\usepackage{xparse} 
+\usepackage{subfig} 
+\usepackage{xparse} 
+\usepackage{float}
+
+\usepackage{biblatex} 
+
+%%%%%This is an image table command, can likely be deleted
+\newcommand{\subf}[2]{
+
+%
+{\small 
+\begin{tabular}
+  [t]{@{}c@{}} #1\ 
+  \#2 
+\end{tabular}
+}
+
+%
+} 
+
+\makeatletter
+\renewcommand*\env@matrix[1][c]{\hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{*\c@MaxMatrixCols #1}}
+\makeatother
+%%%%%% Tensor Product
+\NewDocumentCommand{\tens}{e{_^}}{ 
+\mathbin{\mathop{\otimes}\displaylimits \IfValueT{#1}{_{#1}} \IfValueT{#2}{^{#2}} }}
+%%%%%% Add \R Reals
+\newcommand{\R}{\mathbb{R}} 
+%%%%%% Add \theorem float
+\newtheorem{theorem}{Theorem}
+%%%%%% Add \definition float
+\theoremstyle{definition} 
+\newtheorem{definition}{Definition}[section]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%Uncomment to add citation library 
+\bibliography{lib} 
+
 \title{Rubella Report}
 \author{David Helekal, Yiping Zhang}
 
@@ -91,5 +133,7 @@ The confirmed rubella cases is in \href{https://webarchive.nationalarchives.gov.
 From there,we could get access to the confirmed cases of rubella from 1996-2018 in different age groups, which will make our age structured SIRV model doable. Also, we could validate our model by those data.
 
 We could use the proportion of female cases in a certain age group cases to predict how many females contract rubella in one year, and compare to that in SIR model without vaccine to see the importance of vaccine.
-
+\newpage
+%%%%%should have a separate page for bibliography
+\printbibliography  
 \end{document}

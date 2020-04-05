@@ -133,3 +133,7 @@ dmypy.json
 *.fls
 *.out
 *.synctex.gz
+*.run.xml
+*.blg
+*.bcf
+*.bbl
