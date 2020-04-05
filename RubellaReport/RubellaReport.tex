@@ -64,7 +64,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%Uncomment to add citation library 
 \bibliography{lib} 
-
 \title{Rubella Report}
 \author{David Helekal, Yiping Zhang}
 
@@ -123,16 +122,10 @@ Where:
 \end{bmatrix}
 \end{gather*}
 \section{Data}
-Our data source is \href{https://webarchive.nationalarchives.gov.uk/20140505133414/http://www.hpa.org.uk/Topics/InfectiousDiseases/InfectionsAZ/Rubella/EpidemiologicalData/}{Rubella Data}.
-
-The immunisaton coverage data is from \href{https://webarchive.nationalarchives.gov.uk/20140505192935/http://www.hpa.org.uk/web/HPAweb&HPAwebStandard/HPAweb_C/1195733819251}{Immunisation Coverage}.
-
-The confirmed rubella cases is in \href{https://webarchive.nationalarchives.gov.uk/20140505195855/http://www.hpa.org.uk/web/HPAweb&HPAwebStandard/HPAweb_C/1195733752351}{Rubella Cases by Age}.
-
-
-From there,we could get access to the confirmed cases of rubella from 1996-2018 in different age groups, which will make our age structured SIRV model doable. Also, we could validate our model by those data.
-
-We could use the proportion of female cases in a certain age group cases to predict how many females contract rubella in one year, and compare to that in SIR model without vaccine to see the importance of vaccine.
+Epidemiologic age structured data for Rubella can be obtained from either Health Protection Agency archives \cite{agency_epidemiological_nodate} or from ECDC Atlas of Infectious Diseases \cite{noauthor_surveillance_nodate}.\\
+Immunisation is available from the NHS COVER reports \cite{noauthor_childhood_nodate}.\\
+As a starting point for contact rate matrices, the POLYMOD study \cite{mossong_social_2008} can utilised.\\
+This data should enable us to parametrise and fit an age stratified SIRV model for years 1998-2019. Adding gender structure should be explored as well in the case of rubella as the primary concern is cogenital rubella syndrome in newborns. 
 \newpage
 %%%%%should have a separate page for bibliography
 \printbibliography  
