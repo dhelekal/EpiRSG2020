@@ -14,6 +14,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{bm}
 \usepackage{mathtools}
 \usepackage{physics}
 
@@ -74,11 +75,10 @@
 Let us define a $k$-age group compartmental SIRV model for the infection dynamics of the diseases covered by the MMR vaccine. This model takes the form of a system of four vectorised ordinary differential equations. Each of the $k$ vector entries then corresponds to a given age subgroup with span $m_i, \quad i\in1...k$. Each equation then governs the dynamics what proportion of the subpopulations is susceptible, infected, recovered, or has been vaccinated.
 
 \begin{align*}
-&\frac{d\mathbf{s}}{dt} &=&& \mathbf{B} - (\mathbf{V} - \mathbf{D})\mathbf{s} - \mathbf{s}*(\beta(t)\mathbf
+&\frac{d\mathbf{s}}{dt} &=&& \mathbf{B} - (\mathbf{V} - \mathbf{D})\mathbf{s} - \mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf
 {i})+\delta_{t_{end}}(t)\mathbf{M}\mathbf{s}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{i}}{dt} &=&&\mathbf{s}*(\beta(t)\mathbf
-{i}) - (\mathbf{D}-\mathbf{d} - \mathbf{\gamma})\mathbf{i}+\delta_{t_{end}}(t)\mathbf{M}\mathbf{i}\\
+&\frac{d\mathbf{i}}{dt} &=&&\mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf{i}) - (\mathbf{D}-\mathbf{d} - \mathbf{\gamma})\mathbf{i}+\delta_{t_{end}}(t)\mathbf{M}\mathbf{i}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 &\frac{d\mathbf{r}}{dt} &=&& \gamma\mathbf{i} - \mathbf{D}\mathbf{r}+\delta_{t_{end}}(t)\mathbf{M}\mathbf{r}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,21 +88,25 @@ Let us define a $k$-age group compartmental SIRV model for the infection dynamic
 $\mathbf{s}*\mathbf{i}\quad\textit{Denotes the elementwise product}$\\
 Where:
 \begin{align*}
-&\mathbf{s}, \mathbf{i}, \mathbf{r} ,\mathbf{v}\in \mathbb{R}^k& \quad& \text{are k-age group classes of susceptible, infected, recovered}\\
+&\mathbf{s}, \mathbf{i}, \mathbf{r} ,\mathbf{v}\in \mathbb{R}^k& \quad& \text{k-age group compartment vectors}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\mathbf{B} \in \mathbb{R}^{k\times k}, \mathbf{B}:=diag(B,0,...,0)& \quad& \text{Birth rate}\\
+&\mathbf{B}:=diag(B,0,...,0)& \quad& \text{Birth rate}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\mathbf{V} \in \mathbb{R}^{k\times k}, \mathbf{V}:=diag(V_1,...,V_k) &\quad& \text{Vaccination rates}\\
+&\mathbf{V}:=diag(V_1,...,V_k) &\quad& \text{Vaccination rates}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\mathbf{D} \in \mathbb{R}^{k\times k}, \mathbf{D}:=diag(D_1,...,D_k) &\quad& \text{Death rates due to other causes}\\
+&\mathbf{D}:=diag(D_1,...,D_k) &\quad& \text{Death rates due to other causes}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\mathbf{d} \in \mathbb{R}^{k\times k}, \mathbf{d}:=diag(d_1,...,d_k) &\quad& \text{Death rates due to disease}\\
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\beta(t):\mathbb{R} \rightarrow \mathbb{R}^{k\times k}&\quad& \text{The (potentially time-dependent) contact rate}\\
+&\mathbf{d}:=diag(d_1,...,d_k) &\quad& \text{Death rates due to disease}\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+&\pmb{\beta}(t):=diag(\beta_1(t),...,\beta_k(t))&\quad& \text{Age-based force of infection}\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+&\mathbf{C}\in \mathbb{R}^{k\times k} &\quad& \text{Age-based \emph{Who Interacts With Who matrix}}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 &\gamma \in \mathbb{R}&\quad&\text{Recovery rate}\\
@@ -124,7 +128,7 @@ Where:
 \section{Data}
 Epidemiologic age structured data for Rubella can be obtained from either Health Protection Agency archives \cite{agency_epidemiological_nodate} or from ECDC Atlas of Infectious Diseases \cite{noauthor_surveillance_nodate}.\\
 Immunisation is available from the NHS COVER reports \cite{noauthor_childhood_nodate}.\\
-As a starting point for contact rate matrices, the POLYMOD study \cite{mossong_social_2008} can utilised.\\
+As a starting point for \emph{Who Interacts With Who} matrices, the POLYMOD study \cite{mossong_social_2008} can utilised.\\
 This data should enable us to parametrise and fit an age stratified SIRV model for years 1998-2019. Adding gender structure should be explored as well in the case of rubella as the primary concern is cogenital rubella syndrome in newborns. 
 \begin{figure}
   \centering
