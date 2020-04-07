@@ -1,0 +1,150 @@
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage[textheight=700pt,textwidth=480pt, bottom=80pt]{geometry}
+
+
+% set font encoding for PDFLaTeX, XeLaTeX, or LuaTeX
+\usepackage{ifxetex,ifluatex}
+\if\ifxetex T\else\ifluatex T\else F\fi\fi T%
+  \usepackage{fontspec}
+\else
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{lmodern}
+\fi
+
+\newcommand{\MYhref}[3][blue]{\href{#2}{\color{#1}{#3}}}%
+
+\usepackage{xcolor}
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = blue,
+            anchorcolor = blue]{hyperref}
+\usepackage{bbding} %checked
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{center}
+\large{\scshape University of Warwick}\\
+{Msc in Mathematics of Systems}\\
+	\vspace{0.75cm}
+\textbf{Research Study Group}\\
+	\Large{Mumps Data \& Model}\\
+		\large{}
+			\vspace{0.75cm}
+			\normalsize{Francesca Basini, Melissa Iacovidou}
+\end{center}
+
+
+\section*{Data}
+\subsection*{Most recent EU outbreaks}
+\begin{itemize}
+    \item \textbf{UK:} 2004-2019, mainly universities. (Gupta et al. 2005)
+    \item \textbf{Ireland:} 2009, secondary schools and unis, probably due to no-vax movements and economic issues of the gov which failed vaccine coverage.
+    \item \textbf{Ireland:} 2019-20, due to low uptake in the 90s, quite high in some counties.
+    \item[-] Belgium: 2012, Ghent uni, only few cases.
+    \item[-] The Netherlands: 2008-10, students, might be due to previous no-vax movements.
+\end{itemize}
+
+
+We decided to focus on UK and possibly Ireland.
+
+\subsection*{UK data and general info}
+\begin{itemize}
+    \item \textbf{Wales and England:} confirmed cases.
+    \href{https://www.gov.uk/government/publications/mumps-confirmed-cases}{Data Source.}\\
+    \texttt{4 spreadsheet: total cases recorded quarterly and total annual cases stratified per county and age-class. Separated into 1995-2012 and 2013-2019. \CheckmarkBold} \\
+    \texttt{data to be used only split into the age-groups mentioned in the Model section, we could disregard the values that are NK (Not Known) or take them into account as some sort of noise?}
+    
+    - More on Epidemiology, Surveillance and Control
+    \href{https://www.gov.uk/government/collections/mumps-guidance-data-and-analysis}{link.}
+    
+    
+    - General info on mumps condition from \href{https://www.nhs.uk/conditions/mumps/}{NHS website}
+    
+    
+    - NHS Children vaccination coverage programme \href{https://digital.nhs.uk/data-and-information/publications/statistical/nhs-immunisation-statistics/england-2017-18}{data from 2017-18}
+    
+    
+    - Mumps and risks in pregnancy \href{https://www.gov.uk/government/publications/mumps-risk-in-pregnancy-infection-in-healthcare-settings-and-mmr-vaccine/mumps-risk-in-pregnancy-infection-in-healthcare-settings-and-mmr-vaccine}{link to website}
+    \item \textbf{Scotland: } we found some plots for quarterly records and for cases stratified by age structure at the following \href{https://www.hps.scot.nhs.uk/a-to-z-of-topics/mumps/}{link}
+    
+    \texttt{to access row data it is necessary to send a \textbf{FOI request.}} \textbf{$\Leftarrow$}
+    
+    - Child vaccination and immmunisation \href{https://www.isdscotland.org/Health-Topics/Child-Health/Immunisation/}{lint to website}
+    
+    \item \textbf{Ireland: } we have a set of pages, 
+    \begin{itemize}
+        \item[a)] \href{https://www.hpsc.ie/a-z/vaccinepreventable/mumps/}{reported cases}, 
+        \item[b)] \href{https://www.hpsc.ie/a-z/vaccinepreventable/mmr-protectionagainstmeaslesmumpsrubella/}{MMR protection} 
+        \item[c)] and some \href{https://www.hpsc.ie/a-z/vaccinepreventable/mumps/publications/annualreports/}{Annual reports}.
+    \end{itemize} 
+    \texttt{no info on how to get the raw data} \textbf{- ?}
+\end{itemize}
+
+\section*{Model [1]}
+
+\subsubsection*{6 age groups:}
+\begin{enumerate}
+\item $0-4$ years (could possibly split to two groups and include the two
+vaccinations)
+\item $5-9$ years
+\item $10-14$ years
+\item $15-19$ years
+\item $20-29$ years
+\item $30+$ years
+\end{enumerate}
+
+\subsection*{ODE model}
+
+\begin{align*}
+\frac{dS_{1}}{dt}= & (1-\theta\sigma)\Lambda-\sum_{j=1}^{6}\beta_{1}c_{1j}S_{1}I_{j}-d_{1}S_{1}-\alpha_{1}S_{1}\\
+\frac{dI_{1}}{dt}= & \sum_{j=1}^{6}\beta_{1}c_{1j}S_{1}I_{j}-(d_{1}+\gamma_{1}+\alpha_{1})I_{1}\\
+\frac{dR_{1}}{dt}= & \theta\sigma\Lambda+\gamma_{1}I_{1}-d_{1}R_{1}-\alpha_{1}R_{1}
+\end{align*}
+
+\begin{align*}
+\frac{dS_{k}}{dt}= & \alpha_{k-1}S_{k-1}-\sum_{j=1}^{6}\beta_{k}c_{kj}S_{k}I_{j}-d_{k}S_{k}-\alpha_{k}S_{k}\\
+\frac{dI_{k}}{dt}= & \alpha_{k-1}I_{k-1}+\sum_{j=1}^{6}\beta_{1}c_{1j}S_{1}I_{j}-(d_{k}+\gamma_{k}+\alpha_{k})I_{k}\\
+\frac{dR_{k}}{dt}= & \alpha_{k-1}R_{k-1}+\gamma_{k}I_{k}-d_{k}R_{k}-\alpha_{k}R_{k}
+\end{align*}
+where $k=2,3,4,5,6$ and $\alpha_{6}=0$.
+$\Lambda=$ birth rate (influx of susceptibles)
+
+$\theta=$ immunisation rate of vaccine
+
+$\sigma=$ efficacy of vaccine
+
+$\beta_{k}=$ probability of transmission per contact for age group
+$k$
+
+$c_{kj}=$ average number of contacts from age group $j$ to age group
+$k$
+
+$d_{k}=$ natural death rate
+
+$\alpha_{k}=$ aging rate
+
+$\gamma_{k}=$ recovery rate\\
+
+\newpage
+Two doses of the MMR vaccine ($88\%$ effective after two doses):
+\begin{enumerate}
+\item within a month of 1st birthday
+\item before school (3 years \& 4 months)
+\end{enumerate}
+Can have a "catch-up" MMR vaccination up to the age of 18.
+\begin{itemize}
+\item people born from 1970-1979 may have only been vaccinated against measles
+\item people born from 1980 to 1990 may not be protected against mumps
+\end{itemize}
+
+\section*{References}
+\begin{enumerate}
+\item Zhou, L., Wang, Y., Xiao, Y., \& Li, M. Y. (2019). Global dynamics of a discrete age-structured SIR epidemic model with applications to measles vaccination strategies. Mathematical biosciences, 308, 27-37.
+\end{enumerate}
+
+
+\end{document}
