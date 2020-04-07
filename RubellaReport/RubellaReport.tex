@@ -126,12 +126,17 @@ Epidemiologic age structured data for Rubella can be obtained from either Health
 Immunisation is available from the NHS COVER reports \cite{noauthor_childhood_nodate}.\\
 As a starting point for contact rate matrices, the POLYMOD study \cite{mossong_social_2008} can utilised.\\
 This data should enable us to parametrise and fit an age stratified SIRV model for years 1998-2019. Adding gender structure should be explored as well in the case of rubella as the primary concern is cogenital rubella syndrome in newborns. 
-\center
 \begin{figure}
-  [h] 
-  \includegraphics[width=1 
-  \textwidth]{../data_nb/Rubella20072018}
-  \caption{ECDC data for Rubella cases in the UK}
+  \centering
+  \subfloat[]{\label{dat:a}\includegraphics[scale=.22]{../data_nb/MeaslesPlot}}
+  \par
+  \centering
+  \subfloat[]{\label{dat:b}\includegraphics[scale=.22]{../data_nb/MumpsPlot}}
+  \par
+  \centering
+  \subfloat[]{\label{dat:c}\includegraphics[scale=.22]{../data_nb/RubellaPlot}}
+  \caption{ECDC Age Standardised rates for the UK plotted against time \ref{dat:a} Measles data \ref{dat:b} Mumps data \ref{dat:c} Rubella data}
+  \label{fig:dat}
 \end{figure}
 \newpage
 %%%%%should have a separate page for bibliography
