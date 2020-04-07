@@ -126,10 +126,15 @@ Where:
 \end{bmatrix}
 \end{gather*}
 \section{Data}
-Epidemiologic age structured data for Rubella can be obtained from either Health Protection Agency archives \cite{agency_epidemiological_nodate} or from ECDC Atlas of Infectious Diseases \cite{noauthor_surveillance_nodate}.\\
-Immunisation is available from the NHS COVER reports \cite{noauthor_childhood_nodate}.\\
-As a starting point for \emph{Who Interacts With Who} matrices, the POLYMOD study \cite{mossong_social_2008} can utilised.\\
-This data should enable us to parametrise and fit an age stratified SIRV model for years 1998-2019. Adding gender structure should be explored as well in the case of rubella as the primary concern is cogenital rubella syndrome in newborns. 
+\subsection{Immunisation Rates}
+Immunisation is available from the NHS COVER reports \cite{noauthor_childhood_nodate}.
+\subsection{Between Group Contact Rates}
+As a starting point for \emph{Who Interacts With Who} matrices, the POLYMOD study \cite{mossong_social_2008} can utilised. This matrix will then further be weighted by force of infection for each age group, to be inferred from data.
+\subsection{Epidemiologic Data}
+There are several sources of age structured epidemiologic data for MMR diseases available.\\ By far the highest temporal resolution for measles and rubella is offered by the ECDC Surveillance Atlas of Infectious Diseases dataset \cite{noauthor_surveillance_nodate}, which offers age standardised rates with monthly resolution, spanning years 1999-2019 for measles, and 2007-2019 for rubella. Unfortunately for mumps this dataset only offers yearly resolution for years 2000-2017.\\
+Further recent age structured data with yearly temporal resolution is available from Public Health England (PHE) reports \cite{noauthor_confirmed_nodate,noauthor_mumps_nodate,noauthor_rubella_nodate}\\
+Historic age-structured data can be obtained from the Health Protection Agency (HPA) archives \cite{noauthor_archived_nodate,noauthor_archived_nodate-1,noauthor_archived_nodate-2}. These datasets span years 1989-2012, and offer yearly temporal resolution. This data offers an insight into situation when vaccination rate too low to confer herd immunity.\\
+This data should be sufficient to parametrise and fit an age-stratified SIRV model for years 1998-2019, as well as to confirm that the compound behaviour of this model under low vaccination rates corresponds to real data.
 \begin{figure}
   \centering
   \subfloat[]{\label{dat:a}\includegraphics[scale=.22]{../data_nb/MeaslesPlot}}
