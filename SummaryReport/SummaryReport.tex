@@ -129,8 +129,8 @@ Or in indexed form
 \begin{align*}
   &\frac{dS_{i}}{dt}&=&&\delta_1(i)B + \delta_{t_{end}}(t)a_{i-1}S_{i-1}-\sum_{j=1}^{k}\beta_{i}c_{ij}S_{i}I_{j}-(d_{i} + \delta_{t_{end}}(t)a_{i} + v_{i})S_{i}\\
   &\frac{dI_{i}}{dt} &=&&\delta_{t_{end}}(t)a_{i-1}I_{i-1}+\sum_{j=1}^{k}\beta_{i}c_{ij}S_{i}I_{j}-(d_{i}+\gamma_{i}+\delta_{t_{end}}(t)a_{i})I_{i}\\
-  &\frac{dR_{i}}{dt} &=&& \delta_{t_{end}}(t)\alpha_{i-1}R_{i-1}+\gamma_{i}I_{i}-(d_{i}-\delta_{t_{end}}(t)\alpha_{i})R_{i}\\
-  &\frac{dV_{i}}{dt} &=&& \delta_{t_{end}}\alpha_{i-1}V_{i-1}+v_iS_i-d_{i}V_{i}-\delta_{t_{end}}\alpha_{i}V_{i}
+  &\frac{dR_{i}}{dt} &=&& \delta_{t_{end}}(t)a_{i-1}R_{i-1}+\gamma_{i}I_{i}-(d_{i}-\delta_{t_{end}}(t)a_{i})R_{i}\\
+  &\frac{dV_{i}}{dt} &=&& \delta_{t_{end}}a_{i-1}V_{i-1}+v_iS_i-d_{i}V_{i}-\delta_{t_{end}}a_{i}V_{i}
 \end{align*}
 where $i=1...k$ and $a_0 = a_k = 0$.
 \section{Data}
