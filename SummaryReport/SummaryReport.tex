@@ -73,7 +73,7 @@
 \newpage
 \section{Model}
 
-Let us define a $k$-age group compartmental SIRV model for the infection dynamics of the diseases covered by the MMR vaccine. This model takes the form of a system of four vectorised ordinary differential equations. Each of the $k$ vector entries then corresponds to a given age subgroup with span $m_i, \quad i\in1...k$. Each equation then governs the dynamics what proportion of the subpopulations is susceptible, infected, recovered, or of those who have been vaccinated.\\
+Let us define a $k$-age group compartmental SIRV model for the infection dynamics of the diseases covered by the MMR vaccine. This model takes the form of a system of four vectorised ordinary differential equations. Each of the $k$ vector entries then corresponds to a given age subgroup with span $a_i, \quad i\in1...k$. Each equation then governs the dynamics what proportion of the subpopulations is susceptible, infected, recovered, or of those who have been vaccinated.\\
 The model can either be represented in matrix form
 \begin{align*}
 &\frac{d\mathbf{s}}{dt} &=&& \mathbf{B} - (\mathbf{V} + \mathbf{d})\mathbf{s} - \mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf
@@ -113,7 +113,7 @@ Where:
 &\mathbf{A}\in\mathbb{R}^{k\times k}&\quad& \text{The age group transition matrix}
 \end{align*}
 
-  where $\mathbf{M}$ has the structure
+  where $\mathbf{A}$ has the structure
 \begin{gather*}
 \mathbf{A}=\begin{bmatrix}[r]
 -a_1^{-1} &           &           &              &   \\
