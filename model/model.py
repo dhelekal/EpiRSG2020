@@ -4,12 +4,12 @@ from scipy.integrate import solve_ivp
 class ModelParams():
     """
     Arguments:
-    age_structure -- vector containing the lower bound of each age class
-    B             -- birth rate
-    V             -- vaccination rates
-    d             -- death rates
-    gamma         -- recovery rates
-    C             -- intergenerational contact rate matrix
+        age_structure -- vector containing the lower bound of each age class
+        B             -- birth rate
+        V             -- vaccination rates
+        d             -- death rates
+        gamma         -- recovery rates
+        C             -- intergenerational contact rate matrix
     """
     def __init__(self, age_strucure, B, V, d, gamma, C):
         self.age_strucure = age_strucure
@@ -23,7 +23,6 @@ class ModelParams():
         self.k = np.size(age_strucure)
 
         ### compute age transition rates
-
         a = age_strucure
         a_shift = np.pad(age_strucure[1:self.k], (0,1), 'edge')
         age_class_sizes = (a_shift-a)[0:self.k-1]
@@ -37,3 +36,20 @@ class SIRVModel(object):
         super(SIRVModel, self).__init__()
         self.model_params = model_params
         self.force_of_infection = force_of_infection
+
+    def __build__(self)
+        ### Initialise equations
+
+    def run(self, ivs, t_max, method = 'RK45')
+        """
+        Runs Model
+        Arguments:
+            ivs    --- Initial conditions
+            tmax   --- Run model until tmax
+            method --- Approximation method passed to integrator
+        Returns: 
+            S 
+            I
+            R
+            V
+        """
