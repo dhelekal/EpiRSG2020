@@ -80,6 +80,19 @@ class SIRVModel(object):
 
         return [ds,di,dr,dv]
 
+    def __age__(self, y):
+        ### Apply discrete aging
+        s = y[0:K_max]
+        i = y[K_max:(K_max*2)]
+        r = y[(K_max*2):(K_max*3)]
+        v = y[(K_max*3):]
+
+        s = A@s   
+        i = A@i
+        r = A@r
+        v = A@v
+
+    return [s, i, r, v]
 
     def run(self, ivs, t_max, method = 'RK45', t_year_scale = 1.0):
         """
@@ -94,9 +107,11 @@ class SIRVModel(object):
         """
         T = [0]
         Y_t = ivs
+        Y0 = ivs
 
         while (T[-1] < t_max):
-            sol_1_year = solve_ivp(self.__dt__, t_span = (T[-1], min(t_max,(T[-1]+1)*t_year_scale)), y0 = Y_t[:,-1], method = method)
+            sol_1_year = solve_ivp(self.__dt__, t_span = (T[-1], min(t_max,(T[-1]+1)*t_year_scale)), y0 = Y0, method = method)
+            Y0 = self.__age__(Y_t[:,-1])
             Y_t = np.hstack(Y_t, sol_1_year.y)
             T = np.hstack(T, sol_1_year.t)
         return (Y_t, T)
