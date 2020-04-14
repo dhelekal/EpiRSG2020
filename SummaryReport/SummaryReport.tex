@@ -77,13 +77,13 @@ Let us define a $k$-age group compartmental SIRV model for the infection dynamic
 The model can either be represented in matrix form
 \begin{align*}
 &\frac{d\mathbf{s}}{dt} &=&& \mathbf{B} - (\mathbf{V} + \mathbf{d})\mathbf{s} - \mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf
-{i})+\delta_{t_{end}}(t)\mathbf{A}\mathbf{s}\\
+{i})+\delta_{t_{end}}(t)(\mathbf{I}-\mathbf{A})\mathbf{s}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{i}}{dt} &=&&\mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf{i}) - (\mathbf{d} + \pmb{\gamma})\mathbf{i}+\delta_{t_{end}}(t)\mathbf{A}\mathbf{i}\\
+&\frac{d\mathbf{i}}{dt} &=&&\mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf{i}) - (\mathbf{d} + \pmb{\gamma})\mathbf{i}+\delta_{t_{end}}(t)(\mathbf{I}-\mathbf{A})\mathbf{i}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{r}}{dt} &=&& \pmb{\gamma}\mathbf{i} - \mathbf{d}\mathbf{r}+\delta_{t_{end}}(t)\mathbf{A}\mathbf{r}\\
+&\frac{d\mathbf{r}}{dt} &=&& \pmb{\gamma}\mathbf{i} - \mathbf{d}\mathbf{r}+\delta_{t_{end}}(t)(\mathbf{I}-\mathbf{A})\mathbf{r}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{v}}{dt} &=&& \mathbf{V}\mathbf{s}-\mathbf{d}\mathbf{v} +\delta_{t_{end}}(t)\mathbf{A}\mathbf{v}\\
+&\frac{d\mathbf{v}}{dt} &=&& \mathbf{V}\mathbf{s}-\mathbf{d}\mathbf{v} +\delta_{t_{end}}(t)(\mathbf{I}-\mathbf{A})\mathbf{v}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{align*}
 $\mathbf{s}*\mathbf{i}\quad\textit{Denotes the elementwise product}$\\
@@ -116,9 +116,9 @@ Where:
   where $\mathbf{A}$ has the structure
 \begin{gather*}
 \mathbf{A}=\begin{bmatrix}[r]
--a_1^{-1} &           &           &              &   \\
- a_1^{-1} & -a_2^{-1} &           &              &   \\
-          &  a_2^{-1} & -a_3^{-1} &              &   \\
+ a_1^{-1} &           &           &              &   \\
+ a_1^{-1} &  a_2^{-1} &           &              &   \\
+          &  a_2^{-1} & a_3^{-1}  &              &   \\
           &           & \ddots    & \ddots       &   \\
           &           &		        & a_{k-1}^{-1} & 0 \\
 \end{bmatrix}
@@ -130,7 +130,7 @@ Or in indexed form
   &\frac{dS_{i}}{dt}&=&&\delta_1(i)B + \delta_{t_{end}}(t)a_{i-1}S_{i-1}-\sum_{j=1}^{k}\beta_{i}c_{ij}S_{i}I_{j}-(d_{i} + \delta_{t_{end}}(t)a_{i} + v_{i})S_{i}\\
   &\frac{dI_{i}}{dt} &=&&\delta_{t_{end}}(t)a_{i-1}I_{i-1}+\sum_{j=1}^{k}\beta_{i}c_{ij}S_{i}I_{j}-(d_{i}+\gamma_{i}+\delta_{t_{end}}(t)a_{i})I_{i}\\
   &\frac{dR_{i}}{dt} &=&& \delta_{t_{end}}(t)a_{i-1}R_{i-1}+\gamma_{i}I_{i}-(d_{i}-\delta_{t_{end}}(t)a_{i})R_{i}\\
-  &\frac{dV_{i}}{dt} &=&& \delta_{t_{end}}a_{i-1}V_{i-1}+v_iS_i-d_{i}V_{i}-\delta_{t_{end}}a_{i}V_{i}
+  &\frac{dV_{i}}{dt} &=&& \delta_{t_{end}}a_{i-1}V_{i-1}+v_iS_i-d_{i}V_{i}-\delta_{t_{end}}(t)a_{i}V_{i}
 \end{align*}
 where $i=1...k$ and $a_0 = a_k = 0$.
 \section{Data}
