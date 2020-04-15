@@ -1,4 +1,6 @@
 import numpy as np
+import math
+import sys
 from scipy.integrate import solve_ivp
 
 class ModelParams():
@@ -41,13 +43,13 @@ class SIRVModel(object):
         self.C = mp.C
         self.k = mp.k
 
-        self.B_mat = np.diag(mp.B)
+        self.B_mat = np.diag(mp.B * np.eye(1,self.k,0))
         self.V_mat = np.diag(mp.V)
         self.d_mat = np.diag(mp.d)
         self.gamma_mat = np.diag(mp.gamma)
 
         a = mp.age_strucure
-        a_shift = np.pad(age_strucure[1:self.k], (0,1), 'edge')
+        a_shift = np.pad(mp.age_strucure[1:self.k], (0,1), 'edge')
         age_class_sizes = (a_shift-a)[0:self.k-1]
 
         #age transition matrix 
@@ -71,26 +73,31 @@ class SIRVModel(object):
         r = y[(K_max*2):(K_max*3)]
         v = y[(K_max*3):]         
 
+
+        ### SIRV equations here
         ds = B - (V+d)@s - s*(beta(t)@C@i)
-        di = s*(beta(t)@C@i) + (d+gamma)@i
+        di = s*(beta(t)@C@i) - (d+gamma)@i
         dr = gamma@i - d@r
         dv = V@s - d@v
+        ### end SIRV equations
 
-        return [ds,di,dr,dv]
+        return np.hstack([ds,di,dr,dv])
 
     def __age__(self, y):
         ### Apply discrete aging
+        K_max = int(len(y)/4)   
+
         s = y[0:K_max]
         i = y[K_max:(K_max*2)]
         r = y[(K_max*2):(K_max*3)]
         v = y[(K_max*3):]
 
-        s = A@s   
-        i = A@i
-        r = A@r
-        v = A@v
+        s = self.A@s   
+        i = self.A@i
+        r = self.A@r
+        v = self.A@v
 
-    return [s, i, r, v]
+        return np.hstack([s, i, r, v])
 
     def run(self, ivs, t_max, method = 'RK45', t_year_scale = 1.0):
         """
@@ -103,13 +110,38 @@ class SIRVModel(object):
             Y_t    -- [S;I;R;V] x T
             T      -- Time steps
         """
-        T = [0]
+        T=[0]
         Y_t = ivs
         Y0 = ivs
 
+        first_run = True
+
+        ###Initialise progress bar
+        num_it = int(math.ceil((t_max/t_year_scale)))
+        progress_bar_width = min(num_it,40)
+        tick_when = int(num_it/progress_bar_width)
+
+        sys.stdout.write("[")
+        #sys.stdout.flush()
+        #sys.stdout.write("\b" * (progress_bar_width+1))
+
         while (T[-1] < t_max):
-            sol_1_year = solve_ivp(self.__dt__, t_span = (T[-1], min(t_max,(T[-1]+1)*t_year_scale)), y0 = Y0, method = method)
+            sol_1_year = solve_ivp(self.__dt__, t_span = (T[-1], min(t_max,T[-1]+1*t_year_scale)), y0 = Y0, method = method)
+
+            if first_run:
+               Y_t = sol_1_year.y
+               first_run = False
+               T = sol_1_year.t
+
+            else:
+                Y_t = np.hstack([Y_t, sol_1_year.y])
+                T = np.hstack([T, sol_1_year.t])
+
             Y0 = self.__age__(Y_t[:,-1])
-            Y_t = np.hstack(Y_t, sol_1_year.y)
-            T = np.hstack(T, sol_1_year.t)
-        return (Y_t, T)
+            ###Show progress
+            if(int(T[-1])%tick_when==0):
+                sys.stdout.write("-")
+                sys.stdout.flush()
+
+        sys.stdout.write("]\n")
+        return (Y_t, T) 
