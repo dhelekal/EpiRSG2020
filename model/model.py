@@ -5,13 +5,14 @@ from scipy.integrate import solve_ivp
 
 class ModelParams():
     """
+    Parameters struct
     Arguments:
-        age_structure -- vector containing the lower bound of each age class
+        age_structure -- vector containing the lower bound for each age class
         B             -- birth rate
         V             -- effective vaccination rate (includes vaccine efficacy)
         d             -- death rates
         gamma         -- recovery rates
-        C             -- intergenerational contact rate matrix
+        C             -- intergenerational contact rate matrix (Who Interacts With Who Matrix)
     """
     def __init__(self, age_strucure, B, V, d, gamma, C):
         self.age_strucure = age_strucure
@@ -26,9 +27,13 @@ class ModelParams():
 
 class SIRVModel(object):
     """
+    SIRV model class
+    This class is stateless post-initialisation!
+    Methods:
+        run                 -- run the simulation
     Arguments:
         model_params        -- model parameters
-        force_of_infection  -- T -> kxk, potentially time dependent force of infection
+        force_of_infection  -- function T -> k x k, potentially time dependent force of infection
     """
     def __init__(self, model_params, force_of_infection):
         super(SIRVModel, self).__init__()
@@ -40,14 +45,17 @@ class SIRVModel(object):
         ### Initialise the model
         mp = self.model_params
 
+        ### export precomputed matrices
         self.C = mp.C
         self.k = mp.k
 
+        ### convert vectors to diagonal matrices
         self.B_mat = np.diag(mp.B * np.eye(1,self.k,0))
         self.V_mat = np.diag(mp.V)
         self.d_mat = np.diag(mp.d)
         self.gamma_mat = np.diag(mp.gamma)
 
+        ### precompute aging matrix from age structure vector
         a = mp.age_strucure
         a_shift = np.pad(mp.age_strucure[1:self.k], (0,1), 'edge')
         age_class_sizes = (a_shift-a)[0:self.k-1]
@@ -65,7 +73,7 @@ class SIRVModel(object):
         beta = self.force_of_infection   
         gamma = self.gamma_mat
      
-        
+        ### extract compartments from state vector
         K_max = int(len(y)/4)   
         
         s = y[0:K_max]
@@ -87,11 +95,13 @@ class SIRVModel(object):
         ### Apply discrete aging
         K_max = int(len(y)/4)   
 
+        ### extract compartments from state vector        
         s = y[0:K_max]
         i = y[K_max:(K_max*2)]
         r = y[(K_max*2):(K_max*3)]
         v = y[(K_max*3):]
 
+        ### multiply by aging matrix A
         s = self.A@s   
         i = self.A@i
         r = self.A@r
@@ -103,9 +113,10 @@ class SIRVModel(object):
         """
         Runs Model
         Arguments:
-            ivs    -- Initial conditions
-            tmax   -- Run model until tmax preferably an integer!
-            method -- Approximation method passed to integrator
+            ivs          -- Initial conditions
+            tmax         -- Run model until tmax preferably an integer!
+            method       -- Approximation method passed to integrator (default: RK45)
+            t_year_scale -- Year scale length (default: one year)
         Returns: 
             Y_t    -- [S;I;R;V] x T
             T      -- Time steps
@@ -126,6 +137,8 @@ class SIRVModel(object):
         #sys.stdout.write("\b" * (progress_bar_width+1))
 
         while (T[-1] < t_max):
+
+            ### Solve for one unit on year scale
             sol_1_year = solve_ivp(self.__dt__, t_span = (T[-1], min(t_max,T[-1]+1*t_year_scale)), y0 = Y0, method = method)
 
             if first_run:
@@ -137,11 +150,13 @@ class SIRVModel(object):
                 Y_t = np.hstack([Y_t, sol_1_year.y])
                 T = np.hstack([T, sol_1_year.t])
 
+            ### Apply aging (or other delta functions)
             Y0 = self.__age__(Y_t[:,-1])
+
             ###Show progress
             if(int(T[-1])%tick_when==0):
                 sys.stdout.write("-")
                 sys.stdout.flush()
-
+        ### Close progress bar
         sys.stdout.write("]\n")
         return (Y_t, T) 
