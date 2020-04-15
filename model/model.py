@@ -22,14 +22,6 @@ class ModelParams():
         ### k age classes
         self.k = np.size(age_strucure)
 
-        ### compute age transition rates
-        a = age_strucure
-        a_shift = np.pad(age_strucure[1:self.k], (0,1), 'edge')
-        age_class_sizes = (a_shift-a)[0:self.k-1]
-
-        #age transition matrix 
-        self.A = np.eye(self.k) - np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) + np.diag(1.0/age_class_sizes, k=-1)
-
 class SIRVModel(object):
     """
     Arguments:
@@ -46,14 +38,20 @@ class SIRVModel(object):
         ### Initialise the model
         mp = self.model_params
 
+        self.C = mp.C
+        self.k = mp.k
+
         self.B_mat = np.diag(mp.B)
         self.V_mat = np.diag(mp.V)
         self.d_mat = np.diag(mp.d)
         self.gamma_mat = np.diag(mp.gamma)
 
-        self.C = mp.C
-        self.A = mp.A
-        self.k = mp.k
+        a = mp.age_strucure
+        a_shift = np.pad(age_strucure[1:self.k], (0,1), 'edge')
+        age_class_sizes = (a_shift-a)[0:self.k-1]
+
+        #age transition matrix 
+        self.A = np.eye(self.k) - np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) + np.diag(1.0/age_class_sizes, k=-1)
 
     def __dt__(self, t, y):
         ### Diff equation in matrix form
