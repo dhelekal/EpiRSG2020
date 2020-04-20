@@ -83,10 +83,10 @@ class SIRVModel(object):
 
 
         ### SIRV equations here
-        ds = B - (V+d)@s - s*(beta(t)@C@i)
+        ds = B - d@s - s*(beta(t)@C@i)
         di = s*(beta(t)@C@i) - (d+gamma)@i
         dr = gamma@i - d@r
-        dv = V@s - d@v
+        dv = - d@v
         ### end SIRV equations
 
         return np.hstack([ds,di,dr,dv])
@@ -102,11 +102,11 @@ class SIRVModel(object):
         v = y[(K_max*3):]
 
         ### multiply by aging matrix A
-        s = self.A@s   
+        s = self.A@s 
         i = self.A@i
         r = self.A@r
         v = self.A@v
-
+        
         return np.hstack([s, i, r, v])
 
     def run(self, ivs, t_max, method = 'RK45', t_year_scale = 1.0):
