@@ -61,7 +61,7 @@ class SIRVModel(object):
         age_class_sizes = (a_shift-a)[0:self.k-1]
 
         #age transition matrix 
-        self.A = np.eye(self.k) - np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) + np.diag(1.0/age_class_sizes, k=-1)
+        self.A = -np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) + np.diag(1.0/age_class_sizes, k=-1)
 
     def __dt__(self, t, y):
         ### Diff equation in matrix form
