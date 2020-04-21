@@ -50,7 +50,7 @@ class SIRVModel(object):
         self.k = mp.k
 
         ### convert vectors to diagonal matrices
-        self.B_mat = np.diag(mp.B * np.eye(1,self.k,0))
+        self.b = mp.B * np.eye(1,self.k,0)
         self.V_mat = np.diag(mp.V)
         self.d_mat = np.diag(mp.d)
         self.gamma_mat = np.diag(mp.gamma)
@@ -60,19 +60,25 @@ class SIRVModel(object):
         a_shift = np.pad(mp.age_strucure[1:self.k], (0,1), 'edge')
         age_class_sizes = (a_shift-a)[0:self.k-1]
 
+         
         #age transition matrix 
-        self.A = -np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) + np.diag(1.0/age_class_sizes, k=-1)
+        self.A = np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) 
+        self.V_mat = np.diag(mp.V)
 
+        self.I = np.eye(mp.k)
+        self.L = np.diag(np.ones(mp.k-1, k=-1))
     def __dt__(self, t, y):
         ### Diff equation in matrix form
-        B = self.B_mat
+        b = self.b
         V = self.V_mat
         d = self.d_mat
         C = self.C
         A = self.A
         beta = self.force_of_infection   
         gamma = self.gamma_mat
-     
+        
+        I=self.I
+
         ### extract compartments from state vector
         K_max = int(len(y)/4)   
         
@@ -83,15 +89,22 @@ class SIRVModel(object):
 
 
         ### SIRV equations here
-        ds = B - (V+d)@s - s*(beta(t)@C@i)
+        ds = (I-V)@b - (V+d)@s - s*(beta(t)@C@i)
         di = s*(beta(t)@C@i) - (d+gamma)@i
         dr = gamma@i - d@r
-        dv = V@s - d@v
+        dv = V@(s+b) - d@v
         ### end SIRV equations
 
         return np.hstack([ds,di,dr,dv])
 
     def __age__(self, y):
+
+
+        A=self.A
+        L=self.L
+        I=self.I
+        V=self.V
+
         ### Apply discrete aging
         K_max = int(len(y)/4)   
 
@@ -102,10 +115,10 @@ class SIRVModel(object):
         v = y[(K_max*3):]
 
         ### multiply by aging matrix A
-        s = self.A@s   
-        i = self.A@i
-        r = self.A@r
-        v = self.A@v
+        s = (L-I)@A@s   
+        i = (L-I)@A@i
+        r = (L-I)@A@r
+        v = (L-I)@A@v
 
         return np.hstack([s, i, r, v])
 
