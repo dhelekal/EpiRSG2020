@@ -51,7 +51,6 @@ class SIRVModel(object):
 
         ### convert vectors to diagonal matrices
         self.B_mat = np.diag(mp.B * np.eye(1,self.k,0))
-        self.V_mat = np.diag(mp.V)
         self.d_mat = np.diag(mp.d)
         self.gamma_mat = np.diag(mp.gamma)
 
@@ -61,7 +60,8 @@ class SIRVModel(object):
         age_class_sizes = (a_shift-a)[0:self.k-1]
 
         #age transition matrix 
-        self.A = -np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) + np.diag(1.0/age_class_sizes, k=-1)
+        self.A = np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) @ (np.diag(1.0, k=0)+ np.diag(1.0-mp.V, k=-1))
+        self.V_mat = np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) @ np.diag(1.0-mp.V, k=-1)
 
     def __dt__(self, t, y):
         ### Diff equation in matrix form
