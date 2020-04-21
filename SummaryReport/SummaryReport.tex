@@ -77,13 +77,13 @@ Let us define a $k$-age group compartmental SIRV model for the infection dynamic
 The model can either be represented in matrix form
 \begin{align*}
 &\frac{d\mathbf{s}}{dt} &=&& \mathbf{B} - (\mathbf{V} + \mathbf{d})\mathbf{s} - \mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf
-{i})+\delta_{t_{end}}(t)(\mathbf{I}-\mathbf{A})\mathbf{s}\\
+{i})+\delta_{t_{end}}(t)\mathbf{A}\mathbf{s}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{i}}{dt} &=&&\mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf{i}) - (\mathbf{d} + \pmb{\gamma})\mathbf{i}+\delta_{t_{end}}(t)(\mathbf{I}-\mathbf{A})\mathbf{i}\\
+&\frac{d\mathbf{i}}{dt} &=&&\mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf{i}) - (\mathbf{d} + \pmb{\gamma})\mathbf{i}+\delta_{t_{end}}(t)\mathbf{A}\mathbf{i}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{r}}{dt} &=&& \pmb{\gamma}\mathbf{i} - \mathbf{d}\mathbf{r}+\delta_{t_{end}}(t)(\mathbf{I}-\mathbf{A})\mathbf{r}\\
+&\frac{d\mathbf{r}}{dt} &=&& \pmb{\gamma}\mathbf{i} - \mathbf{d}\mathbf{r}+\delta_{t_{end}}(t)\mathbf{A}\mathbf{r}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{v}}{dt} &=&& \mathbf{V}\mathbf{s}-\mathbf{d}\mathbf{v} +\delta_{t_{end}}(t)(\mathbf{I}-\mathbf{A})\mathbf{v}\\
+&\frac{d\mathbf{v}}{dt} &=&& \mathbf{V}\mathbf{s}-\mathbf{d}\mathbf{v} +\delta_{t_{end}}(t)\mathbf{A}\mathbf{v}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{align*}
 $\mathbf{s}*\mathbf{i}\quad\textit{Denotes the elementwise product}$\\
@@ -116,11 +116,11 @@ Where:
   where $\mathbf{A}$ has the structure
 \begin{gather*}
 \mathbf{A}=\begin{bmatrix}[r]
- a_1^{-1} &           &           &              &   \\
- a_1^{-1} &  a_2^{-1} &           &              &   \\
-          &  a_2^{-1} & a_3^{-1}  &              &   \\
-          &           & \ddots    & \ddots       &   \\
-          &           &		        & a_{k-1}^{-1} & 0 \\
+ -a_1^{-1} &            &           &              &   \\
+  a_1^{-1} &  -a_2^{-1} &           &              &   \\
+           &  a_2^{-1}  & -a_3^{-1} &              &   \\
+           &            & \ddots    & \ddots       &   \\
+           &            &		        & a_{k-1}^{-1} & 0 \\
 \end{bmatrix}
 \end{gather*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
