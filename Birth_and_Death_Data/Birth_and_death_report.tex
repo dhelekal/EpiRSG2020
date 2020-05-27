@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[parfill]{parskip}
+
+
+\begin{document}
+\section{Birth and Death Rate}
+\subsection{Way 1}
+In our model, the population size remains a constant which means that the birth rate and death rate are balanced.  We consider the steady state for the age distribution $x = (x_1, x_2, \cdots, x_n)$ where $n$ is the number of the age groups and $x_i$ is the proportion of the number of i-th age group people in the total population. Specifically, We set the $x_1$ as the age 0 group. Considering aging and death in the last age group, we have
+\[
+\left(\begin{array}{c}
+    x_1  \\
+    x_2 \\
+    \vdots \\
+    x_n
+\end{array}\right) = \left(\begin{array}{cccccc}
+    0 & 0 & 0 & \cdots  & 0 & 0 \\
+    1& 1-\frac{1}{\alpha_2} & 0 &\cdots  & 0 & 0\\
+    0 & \frac{1}{\alpha_2} & 1-\frac{1}{\alpha_3} & \cdots  & 0 & 0\\
+    0 & 0 & \frac{1}{\alpha_3} & \ddots & 0 & 0\\
+    0 & 0 & 0 & \ddots &  1-\frac{1}{\alpha_{n-1}} & 0\\ 
+    0 & 0 & 0 &\cdots & \frac{1}{\alpha_{n-1}} & 1-d 
+\end{array}\right)\left(\begin{array}{c}
+    x_1 \\
+    x_2 \\
+    \vdots \\
+    x_n
+\end{array}\right) + \left(\begin{array}{c}
+    B  \\
+    0\\
+    \vdots \\
+    0
+\end{array}\right),
+\]
+where $\alpha_i$ is the age-span of the i-th age group, d is the death rate of the last age group and B is the birth rate in the total population. After calculation, we have 
+
+\begin{eqnarray*} 
+x_1 & = & B,  \\
+x_2 & = & \alpha_2x_1 = \alpha_2B, \\
+x_3 & = & \frac{\alpha_3}{\alpha_2}x_2 = \alpha_3 x_1 = \alpha_3B,\\
+&\vdots&\\
+x_{n-1} & = & \frac{\alpha_{n-1}}{\alpha_{n-2}}x_{n-2} = \cdots = \alpha_{n-1} x_1 = \alpha_{n-1}B,\\
+x_n & = & \frac{d}{\alpha_{n-1}}x_{n-1} = \cdots = dx_1 = dB.
+\end{eqnarray*}
+Since 
+\[
+\sum_{i = 1}^n x_i = 1,
+\]
+we have
+\[
+(1+\alpha_1 + \alpha_2 + \cdots + \alpha_{n-1} + d)B = 1,
+\]
+which follows that the death rate 
+\[
+d = \frac{1}{B}-1-\alpha_1 - \alpha_2 - \cdots - \alpha_{n-1}.
+\]
+
+
+\subsection{Way 2}
+In this method, we use the birth rate $B$ from the demographics and rescale the death rate $D$ to balance the birth rate. The ratio $B/D$ is multiplied to the death rate of each age group to get the rescaled death rate by age. 
+
+\end{document}
