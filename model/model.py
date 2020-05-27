@@ -121,7 +121,7 @@ class SIRVModel(object):
 
         ### multiply by aging matrix A
         s = s+(L-I)@A@s   
-        i = o+(L-I)@A@i
+        i = i+(L-I)@A@i
         r = r+(L-I)@A@r
         v = v+(L-I)@A@v
 
