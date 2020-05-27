@@ -51,7 +51,7 @@ class SIRVModel(object):
         self.k = mp.k
 
         ### convert vectors to diagonal matrices
-        self.b = mp.B * np.eye(1,self.k,0)
+        self.b =  (mp.B/mp.N) * np.eye(1,self.k,0)
         self.V_mat = np.diag(mp.V)
         self.gamma_mat = np.diag(mp.gamma)
 
@@ -60,7 +60,7 @@ class SIRVModel(object):
         a_shift = np.pad(mp.age_strucure[1:self.k], (0,1), 'edge')
         age_class_sizes = (a_shift-a)[0:self.k-1]
 
-        death_rate = 1.0/(N/mp.B-np.sum(1.0/age_class_sizes))
+        death_rate = 1.0/(mp.N/mp.B-np.sum(1.0/age_class_sizes))
         assert death_rate > 0, "Death rate not positive, parameters entered probably correspond to a growing population profile"
 
         #age transition matrix 
@@ -71,7 +71,7 @@ class SIRVModel(object):
         self.L = np.diag(np.ones(mp.k-1, k=-1))
 
         self.d_mat = np.eye(1,self.k,self.k-1)*death_rate
-        
+
     def __dt__(self, t, y):
         ### Diff equation in matrix form
         b = self.b
