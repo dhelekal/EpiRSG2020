@@ -8,19 +8,20 @@ class ModelParams():
     Parameters struct
     Arguments:
         age_structure -- vector containing the lower bound for each age class
-        B             -- birth rate
+        B             -- average birth rate per capita
         V             -- effective vaccination rate (includes vaccine efficacy)
-        d             -- death rates
         gamma         -- recovery rates
         C             -- intergenerational contact rate matrix (Who Interacts With Who Matrix)
+        N             -- population size
     """
-    def __init__(self, age_strucure, B, V, d, gamma, C):
+    def __init__(self, age_strucure, B, V, gamma, C, N):
         self.age_strucure = age_strucure
         self.B = B
         self.V = V 
         self.d = d
         self.gamma = gamma
         self.C = C
+        self.N = N
 
         ### k age classes
         self.k = np.size(age_strucure)
@@ -52,7 +53,6 @@ class SIRVModel(object):
         ### convert vectors to diagonal matrices
         self.b = mp.B * np.eye(1,self.k,0)
         self.V_mat = np.diag(mp.V)
-        self.d_mat = np.diag(mp.d)
         self.gamma_mat = np.diag(mp.gamma)
 
         ### precompute aging matrix from age structure vector
@@ -60,13 +60,18 @@ class SIRVModel(object):
         a_shift = np.pad(mp.age_strucure[1:self.k], (0,1), 'edge')
         age_class_sizes = (a_shift-a)[0:self.k-1]
 
-         
+        death_rate = 1.0/(N/mp.B-np.sum(1.0/age_class_sizes))
+        assert death_rate > 0, "Death rate not positive, parameters entered probably correspond to a growing population profile"
+
         #age transition matrix 
         self.A = np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) 
         self.V_mat = np.diag(mp.V)
 
         self.I = np.eye(mp.k)
         self.L = np.diag(np.ones(mp.k-1, k=-1))
+
+        self.d_mat = np.eye(1,self.k,self.k-1)*death_rate
+        
     def __dt__(self, t, y):
         ### Diff equation in matrix form
         b = self.b
