@@ -120,10 +120,10 @@ class SIRVModel(object):
         v = y[(K_max*3):]
 
         ### multiply by aging matrix A
-        s = (L-I)@A@s   
-        i = (L-I)@A@i
-        r = (L-I)@A@r
-        v = (L-I)@A@v
+        s = s+(L-I)@A@s   
+        i = o+(L-I)@A@i
+        r = r+(L-I)@A@r
+        v = v+(L-I)@A@v
 
         return np.hstack([s, i, r, v])
 
