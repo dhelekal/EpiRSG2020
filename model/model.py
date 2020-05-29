@@ -173,5 +173,5 @@ class SIRVModel(object):
 
             ### Apply aging (or other delta functions)
             Y0 = self.__age__(Y_t[:,-1])
-
         return (Y_t, T) 
+
