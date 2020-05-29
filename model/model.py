@@ -133,13 +133,14 @@ class SIRVModel(object):
 
         return np.hstack([s, i, r, v])
 
-    def run(self, ivs, t_max, method = 'RK45', t_year_scale = 1.0):
+    def run(self, ivs, t_max, method = 'RK45', h=-1, t_year_scale = 1.0):
         """
         Runs Model
         Arguments:
             ivs          -- Initial conditions
-            tmax         -- Run model until tmax preferably an integer!
+            t_max         -- Run model until t_max preferably an integer!
             method       -- Approximation method passed to integrator (default: RK45)
+            h            -- Time step size. Use -1 for adaptive step size (default: -1)
             t_year_scale -- Year scale length (default: one year)
         Returns: 
             Y_t    -- [S;I;R;V] x T
@@ -161,9 +162,15 @@ class SIRVModel(object):
         #sys.stdout.write("\b" * (progress_bar_width+1))
 
         while (T[-1] < t_max):
-
+            t0 = T[-1]
+            tend = min(t_max,T[-1]+1*t_year_scale)
+            t_span = (t0, tend)
             ### Solve for one unit on year scale
-            sol_1_year = solve_ivp(self.__dt__, t_span = (T[-1], min(t_max,T[-1]+1*t_year_scale)), y0 = Y0, method = method)
+            if (h <0)
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method)
+
+            else:
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = numpy.arange(t0,tend, h))
 
             if first_run:
                Y_t = sol_1_year.y
