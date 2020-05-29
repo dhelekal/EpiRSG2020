@@ -166,11 +166,11 @@ class SIRVModel(object):
             tend = min(t_max,T[-1]+1*t_year_scale)
             t_span = (t0, tend)
             ### Solve for one unit on year scale
-            if (h <0)
+            if (h <0):
                 sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method)
 
             else:
-                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = numpy.arange(t0,tend, h))
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = np.arange(t0,tend, h))
 
             if first_run:
                Y_t = sol_1_year.y
