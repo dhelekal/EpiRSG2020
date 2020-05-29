@@ -133,13 +133,14 @@ class SIRVModel(object):
 
         return np.hstack([s, i, r, v])
 
-    def run(self, ivs, t_max, method = 'RK45', t_year_scale = 1.0):
+    def run(self, ivs, t_max, method = 'RK45', eval_per_year=-1, t_year_scale = 1.0):
         """
         Runs Model
         Arguments:
             ivs          -- Initial conditions
-            tmax         -- Run model until tmax preferably an integer!
+            t_max        -- Run model until t_max preferably an integer!
             method       -- Approximation method passed to integrator (default: RK45)
+            eval_per_year -- Time steps per year. Use -1 for adaptive step size (default: -1)
             t_year_scale -- Year scale length (default: one year)
         Returns: 
             Y_t    -- [S;I;R;V] x T
@@ -151,19 +152,15 @@ class SIRVModel(object):
 
         first_run = True
 
-        ###Initialise progress bar
-        num_it = int(math.ceil((t_max/t_year_scale)))
-        progress_bar_width = min(num_it,40)
-        tick_when = int(num_it/progress_bar_width)
-
-        sys.stdout.write("[")
-        #sys.stdout.flush()
-        #sys.stdout.write("\b" * (progress_bar_width+1))
-
         while (T[-1] < t_max):
-
+            t0 = T[-1]
+            tend = min(t_max,T[-1]+1*t_year_scale)
+            t_span = (t0, tend)
             ### Solve for one unit on year scale
-            sol_1_year = solve_ivp(self.__dt__, t_span = (T[-1], min(t_max,T[-1]+1*t_year_scale)), y0 = Y0, method = method)
+            if (eval_per_year <0):
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method)
+            else:
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = np.linspace(t0, tend, num=eval_per_year))
 
             if first_run:
                Y_t = sol_1_year.y
@@ -176,11 +173,5 @@ class SIRVModel(object):
 
             ### Apply aging (or other delta functions)
             Y0 = self.__age__(Y_t[:,-1])
-
-            ###Show progress
-            if(int(T[-1])%tick_when==0):
-                sys.stdout.write("-")
-                sys.stdout.flush()
-        ### Close progress bar
-        sys.stdout.write("]\n")
         return (Y_t, T) 
+
