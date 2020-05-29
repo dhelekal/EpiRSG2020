@@ -76,14 +76,14 @@
 Let us define a $k$-age group compartmental SIRV model for the infection dynamics of the diseases covered by the MMR vaccine. This model takes the form of a system of four vectorised ordinary differential equations. Each of the $k$ vector entries then corresponds to a given age subgroup with span $a_i, \quad i\in1...k$. Each equation then governs the dynamics what proportion of the subpopulations is susceptible, infected, recovered, or of those who have been vaccinated.\\
 The model can either be represented in matrix form
 \begin{align*}
-&\frac{d\mathbf{s}}{dt} &=& (\mathbf{I}-\mathbf{V})\mathbf{b} - (\mathbf{V} + \mathbf{d})\mathbf{s} - \mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf
+&\frac{d\mathbf{s}}{dt} &=& (\mathbf{I}-\mathbf{V})\mathbf{b} - (\mathbf{V} + \mathbf{D})\mathbf{s} - \mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf
 {i})+\delta_{t_{end}}(t)(\mathbf{L}-\mathbf{I})\mathbf{A}\mathbf{s}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{i}}{dt} &=&\mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf{i}) - (\mathbf{d} + \pmb{\gamma})\mathbf{i}+\delta_{t_{end}}(t)(\mathbf{L}-\mathbf{I})\mathbf{A}\mathbf{i}\\
+&\frac{d\mathbf{i}}{dt} &=&\mathbf{s}*(\pmb{\beta}(t)\mathbf{C}\mathbf{i}) - (\mathbf{D} + \pmb{\gamma})\mathbf{i}+\delta_{t_{end}}(t)(\mathbf{L}-\mathbf{I})\mathbf{A}\mathbf{i}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{r}}{dt} &=& \pmb{\gamma}\mathbf{i} - \mathbf{d}\mathbf{r}+\delta_{t_{end}}(t)(\mathbf{L}-\mathbf{I})\mathbf{A}\mathbf{r}\\
+&\frac{d\mathbf{r}}{dt} &=& \pmb{\gamma}\mathbf{i} - \mathbf{D}\mathbf{r}+\delta_{t_{end}}(t)(\mathbf{L}-\mathbf{I})\mathbf{A}\mathbf{r}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\frac{d\mathbf{v}}{dt} &=& \mathbf{V}(\mathbf{s}+\mathbf{b})-\mathbf{d}\mathbf{v} +\delta_{t_{end}}(t)(\mathbf{L}-\mathbf{I})\mathbf{A}\mathbf{v}\\
+&\frac{d\mathbf{v}}{dt} &=& \mathbf{V}(\mathbf{s}+\mathbf{b})-\mathbf{D}\mathbf{v} +\delta_{t_{end}}(t)(\mathbf{L}-\mathbf{I})\mathbf{A}\mathbf{v}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{align*}
 $\mathbf{s}*\mathbf{i}\quad\textit{Denotes the elementwise product}$\\
@@ -99,7 +99,7 @@ Where:
 &\mathbf{V}:=diag(v_1,...,v_k) &\quad& \text{Vaccination rates}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-&\mathbf{d}:=diag(d_1,...,d_k) &\quad& \text{Death rates due to other causes}\\
+&\mathbf{D}:=diag(d_1,...,d_k) &\quad& \text{Death rates due to other causes}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 &\pmb{\beta}(t):=diag(\beta_1(t),...,\beta_k(t))&\quad& \text{Age-based force of infection}\\
@@ -157,6 +157,43 @@ This data should be sufficient to parametrise and fit an age-stratified SIRV mod
   \caption{ECDC Age Standardised rates for the UK plotted against time \ref{dat:a} Measles data \ref{dat:b} Mumps data \ref{dat:c} Rubella data}
   \label{fig:dat}
 \end{figure}
+\subsection{Population Structure}
+Consider a situation where a constant population size is desired, and the following is given: 
+\begin{align*}
+&\mathbf{\alpha}^* &\quad \text{age distribution}\\
+&\mathbf{b} &\quad \text{birth rate per capita}\\
+&\mathbf{N} &\quad \text{total population size}
+\end{align*}
+It is then required to estimate the matrix consisting of the total proportions of each age group that die every year $X=diag(x_1,...,x_n)$, such that:
+\begin{gather*}
+\mathbf{\alpha}^* = (\mathbf{\alpha}^* +\mathbf{b}/N) + (\mathbf{I}-\mathbf{L})\mathbf{A}\mathbf{D}(\mathbf{\alpha}^*+\mathbf{b}/N)
+\end{gather*}
+then:
+\begin{align*}
+&&\mathbf{\alpha}^* &= (\mathbf{I} +(\mathbf{I}-\mathbf{L}))\mathbf{A}\mathbf{X}(\mathbf{\alpha}^*+\mathbf{b}/N))\\
+&\Rightarrow&\mathbf{M}^{-1}\mathbf{\alpha}^* &= \mathbf{X}\mathbf{q}\\
+&\Rightarrow&\left<\mathbf{M}^{-1}\mathbf{\alpha}^*,\mathbf{e}_j\right> &= \left<\mathbf{Xq},\mathbf{e}_j\right>\\
+&\Rightarrow& \left<\mathbf{M}^{-1}\mathbf{\alpha}^*,\mathbf{e}_j\right> &= x_jq_j\\
+&\Rightarrow&x_j &= \frac{\left<\mathbf{M}^{-1}\mathbf{\alpha}^*,\mathbf{e}_j\right>}{q_j}
+\end{align*}
+Where:
+\begin{align*}
+\mathbf{M}&=:(\mathbf{I} +(\mathbf{I}-\mathbf{L}))\mathbf{A}\\
+\mathbf{q}&=:\mathbf{\alpha}^*+\mathbf{b}/N
+\end{align*}
+and $\mathbf{e}_j$ is the j-th basis vector.
+
+Furthermore $\mathbf{M}$ is invertible as $(\mathbf{I}-\mathbf{L})\mathbf{A}$ is singular, positive-semidefinite, and $\mathbf{M}$ it's spectral shift away from zero.
+
+Finally, to obtain death rates $d_j$, we note that these relate to the total proportion of a given age group that dies every year through:
+
+\begin{gather*}
+x_j\alpha^*_j = \int_0^1  d_j a \,da, \quad a(0) = \alpha^*_j
+\end{gather*}
+Therefore:
+\begin{gather*}
+\log(x_j+1)= d_j
+\end{gather*} 
 \newpage
 %%%%%should have a separate page for bibliography
 \printbibliography  
