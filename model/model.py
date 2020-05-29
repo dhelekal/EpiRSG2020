@@ -53,7 +53,7 @@ class SIRVModel(object):
         self.k = mp.k
 
         ### convert vectors to diagonal matrices
-        self.b =  (mp.B/mp.N) * np.eye(1,self.k,0)
+        self.b =  np.reshape((mp.B/mp.N) * np.eye(1,self.k,0),(-1))
         self.V_mat = np.diag(mp.V)
         self.gamma_mat = np.diag(mp.gamma)
 
@@ -70,7 +70,7 @@ class SIRVModel(object):
         self.V_mat = np.diag(mp.V)
 
         self.I = np.eye(mp.k)
-        self.L = np.diag(np.ones(mp.k-1, k=-1))
+        self.L = np.diag(np.ones(mp.k-1), k=-1)
 
         self.d_mat = np.diag(mp.d)# np.eye(1,self.k,self.k-1)*death_rate
 
@@ -108,8 +108,7 @@ class SIRVModel(object):
         A=self.A
         L=self.L
         I=self.I
-        V=self.V
-
+        
         ### Apply discrete aging
         K_max = int(len(y)/4)   
 
