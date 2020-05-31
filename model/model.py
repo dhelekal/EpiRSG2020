@@ -8,9 +8,9 @@ class ModelParams():
     Parameters struct
     Arguments:
         age_structure -- vector containing the lower bound for each age class
-        B             -- average birth rate per capita
-        V             -- effective vaccination rate (includes vaccine efficacy)
-        d             -- death rates
+        B             -- average birth rate per capita T->\\R
+        V             -- effective vaccination rate (includes vaccine efficacy) T -> k
+        d             -- death rates , T -> k
         gamma         -- recovery rates
         C             -- intergenerational contact rate matrix (Who Interacts With Who Matrix)
         N             -- population size
@@ -53,8 +53,8 @@ class SIRVModel(object):
         self.k = mp.k
 
         ### convert vectors to diagonal matrices
-        self.b =  np.reshape((mp.B/mp.N) * np.eye(1,self.k,0),(-1))
-        self.V_mat = np.diag(mp.V)
+        self.b = lambda t: np.reshape((mp.B(t)/mp.N) * np.eye(1,self.k,0),(-1))
+        self.V_mat = lambda t: np.diag(mp.V(t))
         self.gamma_mat = np.diag(mp.gamma)
 
         ### precompute aging matrix from age structure vector
@@ -72,7 +72,7 @@ class SIRVModel(object):
         self.I = np.eye(mp.k)
         self.L = np.diag(np.ones(mp.k-1), k=-1)
 
-        self.d_mat = np.diag(mp.d)# np.eye(1,self.k,self.k-1)*death_rate
+        self.d_mat = lambda t: np.diag(mp.d(t))# np.eye(1,self.k,self.k-1)*death_rate
 
     def __dt__(self, t, y):
         ### Diff equation in matrix form
@@ -95,10 +95,10 @@ class SIRVModel(object):
         v = y[(K_max*3):]         
 
         ### SIRV equations here
-        ds = (I-V)@b - (V+d)@s - s*(beta(t)@C@i)
-        di = s*(beta(t)@C@i) - (d+gamma)@i
-        dr = gamma@i - d@r
-        dv = V@(s+b) - d@v
+        ds = (I-V(t))@b(t) - (V(t)+d(t))@s - s*(beta(t)@C@i)
+        di = s*(beta(t)@C@i) - (d(t)+gamma)@i
+        dr = gamma@i - d(t)@r
+        dv = V(t)@(s+b(t)) - d(t)@v
         ### end SIRV equations
 
         return np.hstack([ds,di,dr,dv])
@@ -160,8 +160,7 @@ class SIRVModel(object):
             if (eval_per_year <0):
                 sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method)
             else:
-                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = np.linspace(t0, tend, num=eval_per_year))
-
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval=np.linspace(t0,tend,num=eval_per_year))
             if first_run:
                Y_t = sol_1_year.y
                first_run = False
