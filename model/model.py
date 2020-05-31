@@ -8,12 +8,12 @@ class ModelParams():
     Parameters struct
     Arguments:
         age_structure -- vector containing the lower bound for each age class
-        B             -- average birth rate per capita T->\\R
+        B             -- average birth rate per capita T -> \\R
         V             -- effective vaccination rate (includes vaccine efficacy) T -> k
-        d             -- death rates , T -> k
+        d             -- death rates, T -> k
         gamma         -- recovery rates
         C             -- intergenerational contact rate matrix (Who Interacts With Who Matrix)
-        N             -- population size
+        N             -- population size, T -> \\R
     """
     def __init__(self, age_strucure, B, V, d, gamma, C, N):
         self.age_strucure = age_strucure
@@ -53,7 +53,7 @@ class SIRVModel(object):
         self.k = mp.k
 
         ### convert vectors to diagonal matrices
-        self.b = lambda t: np.reshape((mp.B(t)/mp.N) * np.eye(1,self.k,0),(-1))
+        self.b = lambda t: np.reshape((mp.B(t)/mp.N(t)) * np.eye(1,self.k,0),(-1))
         self.V_mat = lambda t: np.diag(mp.V(t))
         self.gamma_mat = np.diag(mp.gamma)
 
@@ -67,8 +67,6 @@ class SIRVModel(object):
 
         #age transition matrix 
         self.A = np.diag(np.pad(1.0/age_class_sizes, (0,1), 'constant', constant_values=(0)), k=0) 
-        self.V_mat = np.diag(mp.V)
-
         self.I = np.eye(mp.k)
         self.L = np.diag(np.ones(mp.k-1), k=-1)
 
