@@ -1,0 +1,11 @@
+﻿year 1999 intial vaccination coverage (%),,,,
+Age ,MMR1,MMR2,Measles catch up(1996),Rubella catch up(1996)
+<1,,,,
+1-4,,,,
+5-9,,,73.6,73.6
+10-14,,,,
+15-19,,,64,
+20-29,,,53,
+30+,,,,
+,,,,
+"For measles and rubella catch up camgaign, coverage data are only  available for whose birth year in 1985-1986, 1986-1987, 1987-1988, 1988-1989. The coverage data are all 92%, so I choose 73.6 = 92*4/5 as the catch up coverage data for 5-9",,,,
