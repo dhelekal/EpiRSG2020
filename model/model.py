@@ -53,7 +53,7 @@ class SIRVModel(object):
         self.k = mp.k
 
         ### convert vectors to diagonal matrices
-        self.b = lambda t: np.reshape((mp.B(t)/mp.N(t)) * np.eye(1,self.k,0),(-1))
+        self.b = lambda t: np.reshape((mp.B(t) )* np.eye(1,self.k,0),(-1))
         self.V_mat = lambda t: np.diag(mp.V(t))
         self.gamma_mat = np.diag(mp.gamma)
 
