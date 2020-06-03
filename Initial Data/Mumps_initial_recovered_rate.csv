@@ -1,10 +1,10 @@
-﻿Age,1999(Initial Recovered Rate),
-<1,0,
-1-4,0.00029299,
-5-9,0.001230063,
-10-14,0.004397702,
-15-19,,
-20-29,,
-30+,,
-,,
-Remark: The rate is calculated for England and Wales,,
+﻿Age,1999(Initial Recovered Rate)
+<1,0
+4-1月,0.00029299
+9-5月,0.001230063
+14-10月,0.004397702
+15-19,0.003726579
+20-29,0.000746378
+30+,0.000144709
+,
+Remark: The rate is calculated for England and Wales,
