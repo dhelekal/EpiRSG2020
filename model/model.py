@@ -53,7 +53,7 @@ class SIRVModel(object):
         self.k = mp.k
 
         ### convert vectors to diagonal matrices
-        self.b = lambda t: np.reshape((mp.B(t) )* np.eye(1,self.k,0),(-1))
+        self.b = lambda t: np.reshape((mp.B(t))* np.eye(1,self.k,0),(-1))
         self.V_mat = lambda t: np.diag(mp.V(t))
         self.gamma_mat = np.diag(mp.gamma)
 
@@ -93,7 +93,7 @@ class SIRVModel(object):
         v = y[(K_max*3):]         
 
         ### SIRV equations here
-        ds = (I-V(t))@b(t) - (V(t)+d(t))@s - s*(beta(t)@C@i)
+        ds = b(t) - (V(t)+d(t))@s - s*(beta(t)@C@i)
         di = s*(beta(t)@C@i) - (d(t)+gamma)@i
         dr = gamma@i - d(t)@r
         dv = V(t)@(s+b(t)) - d(t)@v
@@ -172,4 +172,8 @@ class SIRVModel(object):
             ### Apply aging (or other delta functions)
             Y0 = self.__age__(Y_t[:,-1])
         return (Y_t, T) 
+
+    def get_age_matrix(self):
+        return (self.L-self.I)@self.A
+
 
