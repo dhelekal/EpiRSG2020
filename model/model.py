@@ -93,7 +93,7 @@ class SIRVModel(object):
         v = y[(K_max*3):]         
 
         ### SIRV equations here
-        ds = (I-V(t))@b(t) - (V(t)+d(t))@s - s*(beta(t)@C@i)
+        ds = b(t) - (V(t)+d(t))@s - s*(beta(t)@C@i)
         di = s*(beta(t)@C@i) - (d(t)+gamma)@i
         dr = gamma@i - d(t)@r
         dv = V(t)@(s+b(t)) - d(t)@v
