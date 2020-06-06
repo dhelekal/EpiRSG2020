@@ -93,19 +93,20 @@ class SIRVModel(object):
         v = y[(K_max*3):]         
 
         ### SIRV equations here
-        ds = b(t) - (V(t)+d(t))@s - s*(beta(t)@C@i)
+        ds = (I-V(t))@b(t) - d(t)@s - s*(beta(t)@C@i)
         di = s*(beta(t)@C@i) - (d(t)+gamma)@i
         dr = gamma@i - d(t)@r
-        dv = V(t)@(s+b(t)) - d(t)@v
+        dv = V(t)@b(t) - d(t)@v
         ### end SIRV equations
 
         return np.hstack([ds,di,dr,dv])
 
-    def __age__(self, y):
+    def __age__(self, y, t):
 
         A=self.A
         L=self.L
         I=self.I
+        V=self.V_mat
         
         ### Apply discrete aging
         K_max = int(len(y)/4)   
@@ -117,10 +118,10 @@ class SIRVModel(object):
         v = y[(K_max*3):]
 
         ### multiply by aging matrix A
-        s = s+(L-I)@A@s   
+        s = s+(L-I-V(t)@L)@A@s 
         i = i+(L-I)@A@i
         r = r+(L-I)@A@r
-        v = v+(L-I)@A@v
+        v = v+(L-I)@A@v+V(t)@L@A@s
 
         n = np.sum(s+i+r+v)
 
@@ -170,7 +171,7 @@ class SIRVModel(object):
                 T = np.hstack([T, sol_1_year.t])
 
             ### Apply aging (or other delta functions)
-            Y0 = self.__age__(Y_t[:,-1])
+            Y0 = self.__age__(Y_t[:,-1], T[-1])
         return (Y_t, T) 
 
     def get_age_matrix(self):
