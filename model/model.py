@@ -85,21 +85,25 @@ class SIRVModel(object):
         I=self.I
 
         ### extract compartments from state vector
-        K_max = int(len(y)/4)   
-        
-        s = y[0:K_max]
-        i = y[K_max:(K_max*2)]
-        r = y[(K_max*2):(K_max*3)]
-        v = y[(K_max*3):]         
+        K_max = int(len(y)/5)
+        assert(K_max == self.k)  
+
+        s   = y[0:K_max]
+        i   = y[K_max:(K_max*2)]
+        r   = y[(K_max*2):(K_max*3)]
+        v   = y[(K_max*3):(K_max*4)] 
+        N_I = y[(K_max*4):]         
 
         ### SIRV equations here
         ds = (I-V(t))@b(t) - d(t)@s - s*(beta(t)@C@i)
         di = s*(beta(t)@C@i) - (d(t)+gamma)@i
         dr = gamma@i - d(t)@r
         dv = V(t)@b(t) - d(t)@v
+        ### Total infecteds tracking eqn
+        dN_I = (s*(beta(t)@C@i))/(s+i+r+v)
         ### end SIRV equations
 
-        return np.hstack([ds,di,dr,dv])
+        return np.hstack([ds,di,dr,dv, dN_i])
 
     def __age__(self, y, t):
 
@@ -109,13 +113,15 @@ class SIRVModel(object):
         V=self.V_mat
         
         ### Apply discrete aging
-        K_max = int(len(y)/4)   
+        K_max = int(len(y)/5)
+        assert(K_max == self.k)  
 
         ### extract compartments from state vector        
-        s = y[0:K_max]
-        i = y[K_max:(K_max*2)]
-        r = y[(K_max*2):(K_max*3)]
-        v = y[(K_max*3):]
+        s   = y[0:K_max]
+        i   = y[K_max:(K_max*2)]
+        r   = y[(K_max*2):(K_max*3)]
+        v   = y[(K_max*3):(K_max*4)] 
+        N_I = y[(K_max*4):] 
 
         ### multiply by aging matrix A
         s = s+(L-I-V(t)@L)@A@s 
@@ -130,7 +136,7 @@ class SIRVModel(object):
         r=(1/n)*r
         v=(1/n)*v
 
-        return np.hstack([s, i, r, v])
+        return np.hstack([s, i, r, v, N_I])
 
     def run(self, ivs, t_max, method = 'RK45', eval_per_year=-1, t_year_scale = 1.0):
         """
@@ -144,10 +150,12 @@ class SIRVModel(object):
         Returns: 
             Y_t    -- [S;I;R;V] x T
             T      -- Time steps
+            Y_NI   -- Cummulative Infections
         """
+
         T=[0]
-        Y_t = ivs
-        Y0 = ivs
+        Y_t = np.hstack([ivs, np.zeroes(self.k)])
+        Y0 = Y_t
 
         first_run = True
 
@@ -172,7 +180,8 @@ class SIRVModel(object):
 
             ### Apply aging (or other delta functions)
             Y0 = self.__age__(Y_t[:,-1], T[-1])
-        return (Y_t, T) 
+            YN_I = Y_t[self.k*4:]
+        return (Y_t[0:self.k*4], T, YN_I) 
 
     def get_age_matrix(self):
         return (self.L-self.I)@self.A
