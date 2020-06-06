@@ -85,8 +85,7 @@ class SIRVModel(object):
         I=self.I
 
         ### extract compartments from state vector
-        K_max = int(len(y)/5)
-        assert(K_max == self.k)  
+        K_max = self.k
 
         s   = y[0:K_max]
         i   = y[K_max:(K_max*2)]
@@ -100,10 +99,10 @@ class SIRVModel(object):
         dr = gamma@i - d(t)@r
         dv = V(t)@b(t) - d(t)@v
         ### Total infecteds tracking eqn
-        dN_I = (s*(beta(t)@C@i))/(s+i+r+v)
+        dN_I = (s*(beta(t)@C@i))/(np.abs(s+i+r+v)+1e-9)###avoid dividing by 0 
         ### end SIRV equations
 
-        return np.hstack([ds,di,dr,dv, dN_i])
+        return np.hstack([ds,di,dr,dv, dN_I])
 
     def __age__(self, y, t):
 
@@ -113,8 +112,7 @@ class SIRVModel(object):
         V=self.V_mat
         
         ### Apply discrete aging
-        K_max = int(len(y)/5)
-        assert(K_max == self.k)  
+        K_max = self.k
 
         ### extract compartments from state vector        
         s   = y[0:K_max]
@@ -154,7 +152,7 @@ class SIRVModel(object):
         """
 
         T=[0]
-        Y_t = np.hstack([ivs, np.zeroes(self.k)])
+        Y_t = np.hstack([ivs, np.zeros(self.k)])
         Y0 = Y_t
 
         first_run = True
