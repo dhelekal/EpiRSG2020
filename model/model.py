@@ -173,8 +173,8 @@ class SIRVModel(object):
                T = sol_1_year.t
 
             else:
-                Y_t = np.hstack([Y_t, sol_1_year.y])
-                T = np.hstack([T, sol_1_year.t])
+                Y_t = np.hstack([Y_t, sol_1_year.y[:,1:]])
+                T = np.hstack([T, sol_1_year.t[1:]])
 
             ### Apply aging (or other delta functions)
             Y0 = self.__age__(Y_t[:,-1], T[-1])
