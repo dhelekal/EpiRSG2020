@@ -163,9 +163,9 @@ class SIRVModel(object):
             t_span = (t0, tend)
             ### Solve for one unit on year scale
             if (eval_per_year <0):
-                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method)
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, atol = 1e-9, rtol = 1e-6)
             else:
-                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = np.linspace(t0, tend, num=eval_per_year))
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = np.linspace(t0, tend, num=eval_per_year), atol=1e-9, rtol=1e-6)
 
             if first_run:
                Y_t = sol_1_year.y
