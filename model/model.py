@@ -136,7 +136,7 @@ class SIRVModel(object):
 
         return np.hstack([s, i, r, v, N_I])
 
-    def run(self, ivs, t_max, method = 'RK45', eval_per_year=-1, t_year_scale = 1.0, pop_scale=1.0):
+    def run(self, ivs, t_max, method = 'RK45', eval_per_year=-1, t_year_scale = 1.0, pop_scale=1.0, atol = 1e-8, rtol = 1e-6):
         """
         Runs Model
         Arguments:
@@ -163,9 +163,9 @@ class SIRVModel(object):
             t_span = (t0, tend)
             ### Solve for one unit on year scale
             if (eval_per_year <0):
-                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, atol = 1e-9, rtol = 1e-6)
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, atol = atol , rtol = rtol)
             else:
-                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = np.linspace(t0, tend, num=eval_per_year), atol=1e-9, rtol=1e-6)
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = np.linspace(t0, tend, num=eval_per_year), atol=atol, rtol=rtol)
 
             if first_run:
                Y_t = sol_1_year.y
