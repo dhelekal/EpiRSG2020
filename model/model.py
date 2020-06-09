@@ -104,7 +104,7 @@ class SIRVModel(object):
 
         return np.hstack([ds,di,dr,dv, dN_I])
 
-    def __age__(self, y, t):
+    def __age__(self, y, t,pop_scale):
 
         A=self.A
         L=self.L
@@ -129,14 +129,14 @@ class SIRVModel(object):
 
         n = np.sum(s+i+r+v)
 
-        s=(1/n)*s
-        i=(1/n)*i
-        r=(1/n)*r
-        v=(1/n)*v
+        s=(1/n)*s*pop_scale
+        i=(1/n)*i*pop_scale
+        r=(1/n)*r*pop_scale
+        v=(1/n)*v*pop_scale
 
         return np.hstack([s, i, r, v, N_I])
 
-    def run(self, ivs, t_max, method = 'RK45', eval_per_year=-1, t_year_scale = 1.0):
+    def run(self, ivs, t_max, method = 'RK45', eval_per_year=-1, t_year_scale = 1.0, pop_scale=1.0):
         """
         Runs Model
         Arguments:
@@ -163,9 +163,9 @@ class SIRVModel(object):
             t_span = (t0, tend)
             ### Solve for one unit on year scale
             if (eval_per_year <0):
-                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method)
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, atol = 1e-9, rtol = 1e-6)
             else:
-                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = np.linspace(t0, tend, num=eval_per_year))
+                sol_1_year = solve_ivp(self.__dt__, t_span = t_span, y0 = Y0, method = method, t_eval = np.linspace(t0, tend, num=eval_per_year), atol=1e-9, rtol=1e-6)
 
             if first_run:
                Y_t = sol_1_year.y
@@ -177,7 +177,7 @@ class SIRVModel(object):
                 T = np.hstack([T, sol_1_year.t[1:]])
 
             ### Apply aging (or other delta functions)
-            Y0 = self.__age__(Y_t[:,-1], T[-1])
+            Y0 = self.__age__(Y_t[:,-1], T[-1], pop_scale)
             YN_I = Y_t[self.k*4:]
         return (Y_t[0:self.k*4], T, YN_I) 
 
