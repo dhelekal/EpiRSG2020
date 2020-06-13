@@ -51,6 +51,7 @@ class SIRVModel(object):
         ### export precomputed matrices
         self.C = mp.C
         self.k = mp.k
+        self.N = mp.N
 
         ### convert vectors to diagonal matrices
         self.b = lambda t: np.reshape((mp.B(t))* np.eye(1,self.k,0),(-1))
@@ -81,6 +82,8 @@ class SIRVModel(object):
         A = self.A
         beta = self.force_of_infection   
         gamma = self.gamma_mat
+
+        N=self.N
         
         I=self.I
 
@@ -94,12 +97,12 @@ class SIRVModel(object):
         N_I = y[(K_max*4):]         
 
         ### SIRV equations here
-        ds = (I-V(t))@b(t) - d(t)@s - s*(beta(t)@C@i)
-        di = s*(beta(t)@C@i) - (d(t)+gamma)@i
+        ds = (I-V(t))@b(t) - d(t)@s - s*(beta(t)@C@i)/N
+        di = s*(beta(t)@C@i)/N - (d(t)+gamma)@i
         dr = gamma@i - d(t)@r
         dv = V(t)@b(t) - d(t)@v
         ### Total infecteds tracking eqn
-        dN_I = (s*(beta(t)@C@i))/(np.abs(s+i+r+v)+1e-9)###avoid dividing by 0 
+        dN_I = (s*(beta(t)@C@i)/N)/(np.abs(s+i+r+v)+1e-9)###avoid dividing by 0 
         ### end SIRV equations
 
         return np.hstack([ds,di,dr,dv, dN_I])
